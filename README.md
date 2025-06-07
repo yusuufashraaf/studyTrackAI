@@ -1,59 +1,51 @@
-# StudyTrackAI
+# 📚 studyTrackAI
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.0.
+**studyTrackAI** is an AI-powered course planning and study tracking web application built with **Angular**.
+It helps learners automatically break down high-level topics (like "Front End" or "Back End") into subtopics with estimated durations, and schedules them on a calendar.
 
-## Development server
+---
 
-To start a local development server, run:
+## 🎯 Project Goals
 
-```bash
-ng serve
-```
+- Help students plan study paths using AI
+- Break down large topics into detailed learning units
+- Display the learning plan visually using a calendar
+- Enable progress tracking through a to-do list or checklist
+- Support flexible scheduling based on user preferences
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## 💡 Example Use Case
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+> You enter `"Front End"` as your learning goal.  
+> The AI responds with:
+>
+> - HTML – 7 days
+> - CSS – 7 days
+> - JavaScript – 10 days
+> - Angular – 14 days  
+>   These are added to your calendar starting from a selected date.
 
-```bash
-ng generate component component-name
-```
+---
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 🔮 Core Features (planned)
 
-```bash
-ng generate --help
-```
+- 🔍 Input a broad topic (e.g., “Front End”)
+- 🧠 Use AI to generate a structured curriculum with durations
+- 📅 Display the schedule on an interactive calendar
+- ✅ Track progress with a to-do checklist
+- 🗓 Allow custom start dates and rescheduling
 
-## Building
+---
 
-To build the project run:
+## 🚀 Getting Started (coming soon)
 
-```bash
-ng build
-```
+Instructions will be added here once the project is scaffolded.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+---
 
-## Running unit tests
+## ✨ Inspiration
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+studyTrackAI was inspired by the challenges of self-paced learning. Many learners struggle to break large topics into structured study plans — this tool aims to solve that with AI + visual planning.
 
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+---
