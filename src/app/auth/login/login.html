@@ -1,0 +1,34 @@
+<div class="login-wrapper">
+    <div class="login-box">
+        <h2>Login</h2>
+        @if(errorMessage){
+        <div class="error-message validation-message" >
+            {{ errorMessage }}
+        </div>
+    }
+        
+
+        
+        <form class="d-flex flex-column align-items-center"
+            (ngSubmit)="login({email:emailInput.value,password:passwordInput.value})">
+            <div class="form-group w-100 mb-3" style="max-width: 350px;">
+                <label for="email" class="form-label">Email</label>
+                <input id="email" name="email" type="text" class="form-control custom-input"
+                    placeholder="Enter your email" #emailInput />
+            </div>
+
+            <div class="form-group w-100 mb-4" style="max-width: 350px;">
+                <label for="password" class="form-label">Password</label>
+                <input id="password" type="password" name="password" class="form-control custom-input"
+                    placeholder="Enter your password" #passwordInput />
+            </div>
+
+            <button type="submit" class="btn custom-btn px-5">Login</button>
+        </form>
+
+        <p>
+            Don't have an account?&nbsp;
+            <a (click)="this.isLogin.onCheck()" class="link-text">Sign up</a>
+        </p>
+    </div>
+</div>
