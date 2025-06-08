@@ -1,0 +1,18 @@
+<div class="sidebar-container d-flex flex-column align-items-start">
+
+    <h3 class="sidebar-title d-none d-md-block mb-4">📘 studyTrackAI</h3>
+
+    <div class="links-wrapper d-flex flex-column flex-md-column w-100">
+        <a routerLink="/main/study" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+            class="sidebar-link d-flex align-items-center" ngbTooltip="Study Planner" placement="right">
+            <span class="icon">📅</span>
+            <span class="link-text d-none d-md-inline ms-2">Study Planner</span>
+        </a>
+        <a routerLink="/main/techniques" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+            class="sidebar-link d-flex align-items-center" ngbTooltip="Techniques" placement="right">
+            <span class="icon">🧠</span>
+            <span class="link-text d-none d-md-inline ms-2">Techniques</span>
+        </a>
+    </div>
+
+</div>

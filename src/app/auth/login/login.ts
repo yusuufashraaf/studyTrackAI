@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { AuthService } from '../../services/auth-service';
 import { FormsModule } from '@angular/forms';
 import { AuthServices } from '../../firebase/auth.services';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +18,7 @@ export class Login {
   password = '';
   errorMessage = '';
 
-  constructor(private authService: AuthServices) {}
+  constructor(private authService: AuthServices , private router:Router) {}
 
   async login(Data: { email: string; password: string }) {
     try {
@@ -26,6 +27,8 @@ export class Login {
         Data.password
       );
       console.log('User logged in:', userCredential.user);
+      this.router.navigate(['/main']);
+
       // Redirect or update UI here after successful login
     } catch (error: any) {
       switch (error.code) {

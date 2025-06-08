@@ -1,0 +1,165 @@
+.calendar-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background-color: #21201b;
+  color: #fdf8df;
+  border-radius: 1rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.cal-month-view {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background-color: #2a2924;
+  border-radius: 0.5rem;
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+
+.cal-header {
+  grid-column: 1 / -1;
+  display: contents;
+}
+
+.cal-header-cell {
+  background-color: #1a1a1a;
+  font-weight: bold;
+  color: #fdf8df;
+  padding: 0.5rem;
+  text-align: center;
+  border: 1px solid #555;
+  user-select: none;
+}
+
+.cal-days {
+  display: contents;
+}
+
+.cal-day-cell {
+  background-color: #333029;
+  border: 1px solid #555;
+  padding: 0.5rem;
+  min-height: 80px;
+  color: #fdf8df;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.cal-day-cell:focus {
+  outline: 2px solid #f2e090;
+  outline-offset: 2px;
+}
+
+.cal-day-number {
+  font-weight: bold;
+  color: #f2e090;
+  margin-bottom: 0.25rem;
+  user-select: none;
+}
+
+.cal-event {
+  background-color: #f2e090;
+  color: #21201b;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  color: #fdf8df;
+}
+
+.calendar-header h2 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.calendar-header button {
+  background: none;
+  border: none;
+  color: #fdf8df;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.3s ease;
+}
+
+.calendar-header button:hover,
+.delete-icon-button:hover {
+  background-color: #333333   ;
+  color: #21201b;
+}
+
+.delete-icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: black;
+  padding: 0.2rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.3s ease;
+}
+
+.delete-icon-button:focus {
+  outline: 2px solid #f2e090;
+  outline-offset: 2px;
+}
+
+.cal-day-name {
+  display: none;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+  .cal-day-name {
+    display: block;
+  }
+  .cal-month-view {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .cal-header-cell {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.2rem;
+  }
+  .cal-day-cell {
+    min-height: 90px;
+    padding: 0.5rem 0.4rem;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+  }
+}
+.cal-day-cell:hover {
+  background-color: rgba(242, 224, 144, 0.2);
+}
+
+@media (max-width: 480px) {
+  .cal-month-view {
+    grid-template-columns: 1fr;
+  }
+  .cal-header {
+    display: none;
+  }
+  .cal-day-cell {
+    min-height: 100px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+  .cal-day-number {
+    font-size: 1.25rem;
+    margin-bottom: 0.4rem;
+  }
+}

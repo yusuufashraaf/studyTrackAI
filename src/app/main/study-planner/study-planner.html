@@ -1,0 +1,50 @@
+<div class="calendar-container">
+    <div class="calendar-header">
+    <button (click)="previousMonth()" aria-label="Previous month">&lt;</button>
+    <h2>{{ monthYear }}</h2>
+    <button (click)="nextMonth()" aria-label="Next month">&gt;</button>
+    </div>
+
+    <div class="cal-month-view">
+    <!-- Header row with day names -->
+    <div class="cal-header" role="row">
+        <div class="cal-header-cell" *ngFor="let day of daysName" role="columnheader">
+        {{ day }}
+        </div>
+    </div>
+
+    <!-- Days grid -->
+    <div class="cal-days" role="grid" aria-label="Calendar days">
+      <ng-container *ngFor="let day of getMonthDays(viewDate)">
+        <div
+        class="cal-day-cell"
+        role="gridcell"
+        tabindex="0"
+        (click)="dayClicked(day.date)"
+        [class.cal-today]="isToday(day.date)"
+        [class.cal-other-month]="day.isOtherMonth"
+        [attr.aria-selected]="isToday(day.date)"
+        [attr.aria-disabled]="day.isOtherMonth"
+        >
+        
+        <!-- Day name shown only on small screens -->
+        <div class="cal-day-name">{{ daysName[day.date.getDay()] }}</div>
+
+        <button
+            type="button"
+            (click)="removeEventsForDay(day.date)"
+            [attr.aria-label]="'Remove events for ' + (day.date | date:'fullDate')"
+            class="delete-icon-button"
+        >
+            <span class="cal-day-number">{{ day.date.getDate() }}</span> 🗑️
+        </button>
+
+        <!-- Show events for this day -->
+          <div *ngFor="let event of eventsForDay(day.date)" class="cal-event">
+            {{ event.title }}
+        </div>
+        </div>
+    </ng-container>
+    </div>
+</div>
+</div>
