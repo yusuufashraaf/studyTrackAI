@@ -138,7 +138,7 @@ export class StudyPlanner implements OnInit {
     };
     this.events = this.generateEventsFromCoursePlan(
       coursePlan,
-      new Date(2025, 5, 16)
+      new Date(2025, 5, 10)
     );
   }
 }

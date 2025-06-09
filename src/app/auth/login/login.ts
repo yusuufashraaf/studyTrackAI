@@ -26,6 +26,7 @@ export class Login {
         Data.email,
         Data.password
       );
+      this.authService.setAuthPersistence()
       this.router.navigate(['/main']);
 
       // Redirect or update UI here after successful login

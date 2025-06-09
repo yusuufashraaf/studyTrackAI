@@ -20,11 +20,10 @@ import { browserLocalPersistence, setPersistence } from 'firebase/auth';
 @Injectable({ providedIn: 'root' })
 export class AuthServices {
   constructor(private auth: Auth, private firestore: Firestore) {
-      this.setAuthPersistence();
-
+    this.setAuthPersistence();
   }
 
-  private async setAuthPersistence() {
+  async setAuthPersistence() {
     try {
       await setPersistence(this.auth, browserLocalPersistence);
     } catch (error) {
