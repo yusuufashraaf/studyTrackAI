@@ -12,7 +12,6 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-
 @Component({
   selector: 'app-study-planner',
   standalone: true,
@@ -108,7 +107,7 @@ export class StudyPlanner implements OnInit {
     startDate: Date
   ): CalendarEvent[] {
     const events: CalendarEvent[] = [];
-    let currentStart = new Date(startDate); 
+    let currentStart = new Date(startDate);
 
     for (const subTopic of coursePlan.subTopics) {
       for (let i = 0; i < subTopic.duration; i++) {
@@ -139,7 +138,7 @@ export class StudyPlanner implements OnInit {
     };
     this.events = this.generateEventsFromCoursePlan(
       coursePlan,
-      new Date(2025, 5, 9)
+      new Date(2025, 5, 16)
     );
   }
 }
