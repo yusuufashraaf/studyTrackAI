@@ -76,24 +76,22 @@
 
 /* Event pill */
 .cal-event {
+  min-height: 30px;
+  height: 30px;
+  line-height: 30px;
+  width: 100%;
   background-color: #f2e090;
   color: #21201b;
-  padding: 6px 10px;
+  padding: 0 10px;
   border-radius: 12px;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   margin-top: 6px;
-  line-height: 1.2;
-  word-break: break-word;
-  white-space: normal;
-  overflow: visible;
-  text-overflow: unset;
-  max-width: 100%;
-  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
-  justify-content: start;
-  gap: 6px;
   user-select: none;
 }
 
@@ -146,8 +144,12 @@
 }
 
 /* Responsive improvements */
+/* Hide day name by default */
 .cal-day-name {
   display: none;
+}
+.cal-header {
+  display: contents;
 }
 
 /* Tablets and small laptops */
