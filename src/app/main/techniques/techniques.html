@@ -1,1 +1,23 @@
-<p>techniques works!</p>
+<h1 class="page-title">LeetCode topics</h1>
+
+<div class="techniques-container">
+    <div *ngFor="let technique of techniques" class="technique-topic" (click)="toggleExpand(technique.topic)"
+        (keydown.enter)="toggleExpand(technique.topic)"
+        (keydown.space)="toggleExpand(technique.topic); $event.preventDefault()" tabindex="0" role="button"
+        [attr.aria-expanded]="technique.expanded">
+        
+        <div class="topic-header">
+
+            {{ technique.topic }}
+            <span class="arrow" [class.expanded]="technique.expanded">&#9662;</span>
+        </div>
+
+        <ul *ngIf="technique.expanded" class="questions-list">
+            <li *ngFor="let q of technique.questions">
+                <a [href]="q.url" target="_blank" rel="noopener">
+                    {{ q.title }} ({{ q.difficulty }})
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
