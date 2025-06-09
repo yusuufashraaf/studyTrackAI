@@ -15,11 +15,22 @@ import {
   query,
   where,
 } from '@angular/fire/firestore';
+import { browserLocalPersistence, setPersistence } from 'firebase/auth';
 
 @Injectable({ providedIn: 'root' })
 export class AuthServices {
-  constructor(private auth: Auth, private firestore: Firestore) {}
+  constructor(private auth: Auth, private firestore: Firestore) {
+      this.setAuthPersistence();
 
+  }
+
+  private async setAuthPersistence() {
+    try {
+      await setPersistence(this.auth, browserLocalPersistence);
+    } catch (error) {
+      console.error('Failed to set Firebase auth persistence:', error);
+    }
+  }
   async signUp(email: string, password: string, fullName: string) {
     const userCredential = await createUserWithEmailAndPassword(
       this.auth,
