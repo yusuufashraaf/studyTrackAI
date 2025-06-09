@@ -18,7 +18,7 @@ export class Login {
   password = '';
   errorMessage = '';
 
-  constructor(private authService: AuthServices , private router:Router) {}
+  constructor(private authService: AuthServices, private router: Router) {}
 
   async login(Data: { email: string; password: string }) {
     try {
@@ -26,7 +26,6 @@ export class Login {
         Data.email,
         Data.password
       );
-      console.log('User logged in:', userCredential.user);
       this.router.navigate(['/main']);
 
       // Redirect or update UI here after successful login
