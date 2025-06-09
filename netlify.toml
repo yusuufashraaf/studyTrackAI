@@ -1,6 +1,7 @@
 [build]
+  publish = "dist/StudyTrackAI/browser"
   command = "npm run build"
-  publish = "dist/study-track-ai"
 
 [build.environment]
   NODE_VERSION = "18"
+
