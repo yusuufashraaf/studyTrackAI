@@ -41,7 +41,7 @@ export class FirestoreService {
     }
   }
   async getTechniques(): Promise<
-    { topic: string; questions: any[]; order: number }[]
+    { topic: string; questions: any[]; order: number,videoURL:string }[]
   > {
     const techniquesCollection = collection(this.firestore, 'techniques');
     const q = query(techniquesCollection, orderBy('order'));
@@ -49,6 +49,7 @@ export class FirestoreService {
 
     const techniquesArray: {
       topic: string;
+      videoURL:string,
       questions: any[];
       order: number;
     }[] = [];
@@ -58,6 +59,7 @@ export class FirestoreService {
         topic: string;
         questions: any[];
         order: number;
+        videoURL:string
       };
       techniquesArray.push(data);
     });

@@ -14,13 +14,14 @@ export class Techniques implements OnInit {
   techniques: {
     topic: string;
     questions: any[];
+    videoURL:string,
     order: number;
     expanded?: boolean;
   }[] = [];
 
   async ngOnInit() {
     this.techniques = await this.firestore.getTechniques();
-    // Initialize expanded flag to false for all topics
+    // Initialize expanded flag to false for all topics    
     this.techniques.forEach((t) => (t.expanded = false));
   }
 
