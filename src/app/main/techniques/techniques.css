@@ -19,10 +19,13 @@
   font-family: Arial, sans-serif;
 }
 
+.technique-wrapper {
+  margin-bottom: 1.5rem;
+}
+
 .technique-topic {
   background-color: #333029;
   border-radius: 0.5rem;
-  margin-bottom: 1rem;
   padding: 0.8rem 1rem;
   cursor: pointer;
   user-select: none;
@@ -44,6 +47,18 @@
   background-color: #555441;
   box-shadow: none;
   transform: scale(0.98);
+}
+
+.easy {
+  color: green;
+}
+
+.medium {
+  color: orange;
+}
+
+.hard {
+  color: red;
 }
 
 .topic-header {
@@ -74,10 +89,15 @@
   font-size: 1rem;
   color: #fdf8df;
   animation: fadeIn 0.3s ease forwards;
+  list-style: none;
+  padding: 0;
 }
 
-.questions-list li {
-  margin-bottom: 0.4rem;
+.question-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
 }
 
 .questions-list a {
@@ -85,6 +105,10 @@
   text-decoration: none;
   transition: color 0.2s ease, transform 0.2s ease;
   display: inline-block;
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .questions-list a:hover,
@@ -94,6 +118,38 @@
   transform: translateX(3px);
   outline-offset: 2px;
   outline: 2px solid #f2e090;
+}
+
+.difficulty {
+  margin-left: 12px;
+  white-space: nowrap;
+}
+
+/* Updated for clickable video icon */
+.video-indicator {
+  margin-top: 0.5rem;
+  text-align: right;
+}
+
+.video-indicator a {
+  color: #f2e090;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: color 0.3s ease, transform 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.video-indicator a:hover,
+.video-indicator a:focus-visible {
+  transform: translateX(2px);
+  outline: none;
+  cursor: pointer;
+}
+
+.video-label {
+  font-weight: 500;
 }
 
 @keyframes fadeIn {
@@ -106,10 +162,3 @@
     transform: translateY(0);
   }
 }
-
-/*
-https://www.youtube.com/watch?v=MiJdgxTWaFs :  bit maniplution 
-https://www.youtube.com/watch?v=mZFuZHOESEY :  Hashing
-https://www.youtube.com/watch?v=On03HWe2tZM :  Two Pointers
-
-*/

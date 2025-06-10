@@ -1,23 +1,34 @@
 <h1 class="page-title">LeetCode topics</h1>
 
 <div class="techniques-container">
-    <div *ngFor="let technique of techniques" class="technique-topic" (click)="toggleExpand(technique.topic)"
-        (keydown.enter)="toggleExpand(technique.topic)"
-        (keydown.space)="toggleExpand(technique.topic); $event.preventDefault()" tabindex="0" role="button"
-        [attr.aria-expanded]="technique.expanded">
-        
-        <div class="topic-header">
+    <div *ngFor="let technique of techniques">
+        <div class="technique-topic" (click)="toggleExpand(technique.topic)"
+            (keydown.enter)="toggleExpand(technique.topic)"
+            (keydown.space)="toggleExpand(technique.topic); $event.preventDefault()" tabindex="0" role="button"
+            [attr.aria-expanded]="technique.expanded">
 
-            {{ technique.topic }}
-            <span class="arrow" [class.expanded]="technique.expanded">&#9662;</span>
+            <div class="topic-header">
+                {{ technique.topic }}
+                <span class="arrow" [class.expanded]="technique.expanded">&#9662;</span>
+            </div>
+
+            <ul *ngIf="technique.expanded" class="questions-list">
+                <li *ngFor="let q of technique.questions" class="question-item">
+                    <a [href]="q.url" target="_blank" rel="noopener">
+                        {{ q.title }}
+                    </a>
+                    <span class="difficulty" [ngClass]="q.difficulty.toLowerCase()">
+                        ({{ q.difficulty }})
+                    </span>
+                </li>
+            </ul>
         </div>
 
-        <ul *ngIf="technique.expanded" class="questions-list">
-            <li *ngFor="let q of technique.questions">
-                <a [href]="q.url" target="_blank" rel="noopener">
-                    {{ q.title }} ({{ q.difficulty }})
-                </a>
-            </li>
-        </ul>
+        <!-- 🔗 Video icon now uses technique.videoURL -->
+        <div class="video-indicator" *ngIf="technique.videoURL">
+            <a [href]="technique.videoURL" target="_blank" rel="noopener">
+                ▶️ <span class="video-label">Watch Video</span>
+            </a>
+        </div>
     </div>
 </div>
