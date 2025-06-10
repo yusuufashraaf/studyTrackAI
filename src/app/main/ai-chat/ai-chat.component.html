@@ -1,0 +1,15 @@
+<div class="ai-chat-container">
+  <div class="ai-chat-input-row">
+    <input
+      [(ngModel)]="userInput"
+      placeholder="Type your message here..."
+      class="ai-chat-input"
+      type="text"
+    />
+    <button class="ai-chat-send-btn" (click)="sendMessage()">Send</button>
+  </div>
+  <div *ngIf="response">
+    <h3>Response:</h3>
+    <pre>{{ response | json }}</pre>
+  </div>
+</div>
