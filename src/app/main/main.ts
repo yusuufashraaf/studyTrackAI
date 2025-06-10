@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
-import { Sidebar } from "./sidebar/sidebar";
+import { Sidebar } from './sidebar/sidebar';
 import { RouterOutlet } from '@angular/router';
+import { AiChatComponent } from './ai-chat/ai-chat.component';
+
 @Component({
   selector: 'app-main',
-  imports: [RouterOutlet,Sidebar],
+  standalone: true,
+  imports: [RouterOutlet, Sidebar, AiChatComponent],
   templateUrl: './main.html',
-  styleUrl: './main.css'
+  styleUrl: './main.css',
 })
-export class Main {
-
-}
+export class Main {}
