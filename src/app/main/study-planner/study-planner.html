@@ -1,56 +1,58 @@
 <div class="calendar-container">
-    <!-- Calendar Header -->
-    <div class="calendar-header">
-        <button (click)="previousMonth()" aria-label="Previous month">&lt;</button>
-        <h2>{{ monthYear }}</h2>
-        <button (click)="nextMonth()" aria-label="Next month">&gt;</button>
+  <!-- Calendar Header -->
+  <div class="calendar-header">
+    <button (click)="previousMonth()" aria-label="Previous month">&lt;</button>
+    <h2>{{ monthYear }}</h2>
+    <button (click)="nextMonth()" aria-label="Next month">&gt;</button>
+  </div>
+
+  <!-- Calendar Month View -->
+  <div class="cal-month-view">
+    <!-- Day Names Header -->
+    <div class="cal-header" role="row">
+      <div class="cal-header-cell" *ngFor="let day of daysName" role="columnheader">
+        {{ day }}
+      </div>
     </div>
 
-    <!-- Calendar Month View -->
-    <div class="cal-month-view">
-        <!-- Day Names Header -->
-        <div class="cal-header" role="row">
-            <div class="cal-header-cell" *ngFor="let day of daysName" role="columnheader">
-                {{ day }}
-            </div>
+    <!-- Calendar Days -->
+    <div class="cal-days" role="grid" aria-label="Calendar days">
+      <ng-container *ngFor="let day of getMonthDays(viewDate)">
+        <div class="cal-day-cell" role="gridcell" tabindex="0" (click)="toggleDetails(day.date, $event)"
+          [class.cal-today]="isToday(day.date)" [class.cal-other-month]="day.isOtherMonth"
+          [attr.aria-selected]="isToday(day.date)" [attr.aria-disabled]="day.isOtherMonth">
+          <!-- Responsive Day Name -->
+          <div class="cal-day-name">{{ daysName[day.date.getDay()] }}</div>
+
+          <!-- Day Number -->
+          <span class="cal-day-number">{{ day.date.getDate() }}</span>
+
+          <!-- Delete Events Button -->
+          <button *ngIf="eventsForDay(day.date).length > 0" type="button"
+            (click)="removeEventsForDay(day.date); $event.stopPropagation()"
+            [attr.aria-label]="'Remove events for ' + (day.date | date:'fullDate')" class="delete-icon-button">
+            🗑️
+          </button>
+
+          <!-- Events Display -->
+          <div *ngFor="let event of eventsForDay(day.date)" class="cal-event" [attr.data-title]="event.title">
+            <span class="cal-event-title">{{ event.title }}</span>
+          </div>
+
+          <!-- Expanded Event Details Panel -->
+          <div *ngIf="openedDetailsDate?.getTime() === day.date.getTime()" class="cal-event-details"
+            (click)="$event.stopPropagation()">
+            <ul>
+              <li *ngFor="let event of eventsForDay(day.date)">
+                {{ event.title }}
+              </li>
+            </ul>
+          </div>
         </div>
-
-        <!-- Calendar Days -->
-        <div class="cal-days" role="grid" aria-label="Calendar days">
-            <ng-container *ngFor="let day of getMonthDays(viewDate)">
-                <div class="cal-day-cell" role="gridcell" tabindex="0" (click)="toggleDetails(day.date, $event)"
-                    [class.cal-today]="isToday(day.date)" [class.cal-other-month]="day.isOtherMonth"
-                    [attr.aria-selected]="isToday(day.date)" [attr.aria-disabled]="day.isOtherMonth">
-                    <!-- Responsive Day Name -->
-                    <div class="cal-day-name">{{ daysName[day.date.getDay()] }}</div>
-
-                    <!-- Day Number -->
-                    <span class="cal-day-number">{{ day.date.getDate() }}</span>
-
-                    <!-- Delete Events Button -->
-                    <button *ngIf="eventsForDay(day.date).length > 0" type="button"
-                        (click)="removeEventsForDay(day.date); $event.stopPropagation()"
-                        [attr.aria-label]="'Remove events for ' + (day.date | date:'fullDate')"
-                        class="delete-icon-button">
-                        🗑️
-                    </button>
-
-                    <!-- Events Display -->
-                    <div *ngFor="let event of eventsForDay(day.date)" class="cal-event" [attr.data-title]="event.title">
-                        <span class="cal-event-title">{{ event.title }}</span>
-                    </div>
-
-                    <!-- Expanded Event Details Panel -->
-                    <div *ngIf="openedDetailsDate?.getTime() === day.date.getTime()" class="cal-event-details"
-                        (click)="$event.stopPropagation()">
-                        <ul>
-                            <li *ngFor="let event of eventsForDay(day.date)">
-                                {{ event.title }}
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </ng-container>
-        </div>
+      </ng-container>
     </div>
+  </div>
+</div>
+<div>
+  <app-ai-chat></app-ai-chat>
 </div>

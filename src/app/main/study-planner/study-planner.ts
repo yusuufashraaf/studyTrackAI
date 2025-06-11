@@ -13,11 +13,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthServices } from '../../firebase/auth.services';
 import { FirestoreService } from '../../firebase/firestore.service';
+import { AiChatComponent } from '../ai-chat/ai-chat.component';
 
 @Component({
   selector: 'app-study-planner',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AiChatComponent],
   templateUrl: './study-planner.html',
   styleUrls: ['./study-planner.css'],
 })

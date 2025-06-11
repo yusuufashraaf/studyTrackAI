@@ -65,3 +65,20 @@ pre {
   margin: 0;
   overflow-x: auto;
 }
+
+/* Limit Reached Styles */
+.limit-reached-input {
+  background: #4a4a4a !important;
+  border-color: #666666 !important;
+  color: #999999 !important;
+  cursor: not-allowed;
+}
+.limit-reached-input::placeholder {
+  color: #888888 !important;
+}
+.limit-reached-btn {
+  background: #4a4a4a !important;
+  color: #999999 !important;
+  cursor: not-allowed;
+  border-color: #666666 !important;
+}
