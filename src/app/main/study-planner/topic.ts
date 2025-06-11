@@ -4,6 +4,5 @@ interface SubTopic {
 }
 
 interface CoursePlan {
-  topic: string;
   subTopics: SubTopic[];
 }

@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { Firestore, collection, addDoc } from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
-import { getDocs, orderBy, query } from 'firebase/firestore';
+import { getDocs, orderBy, query, where } from 'firebase/firestore';
 
 @Injectable({ providedIn: 'root' })
 export class FirestoreService {
@@ -40,8 +40,10 @@ export class FirestoreService {
       }
     }
   }
+
+  //used to return the techniques from firestore
   async getTechniques(): Promise<
-    { topic: string; questions: any[]; order: number,videoURL:string }[]
+    { topic: string; questions: any[]; order: number; videoURL: string }[]
   > {
     const techniquesCollection = collection(this.firestore, 'techniques');
     const q = query(techniquesCollection, orderBy('order'));
@@ -49,7 +51,7 @@ export class FirestoreService {
 
     const techniquesArray: {
       topic: string;
-      videoURL:string,
+      videoURL: string;
       questions: any[];
       order: number;
     }[] = [];
@@ -59,11 +61,32 @@ export class FirestoreService {
         topic: string;
         questions: any[];
         order: number;
-        videoURL:string
+        videoURL: string;
       };
       techniquesArray.push(data);
     });
 
     return techniquesArray;
+  }
+  async getSubTopicsByUserId(userId: string): Promise<any[]> {
+    const userResponseCollection = collection(this.firestore, 'user_responses');
+    const q = query(userResponseCollection, where('userId', '==', userId));
+
+    try {
+      const querySnapshot = await getDocs(q);
+      const subTopicsList: any[] = [];
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data["response"]['subTopics']) {
+          subTopicsList.push(...data["response"]['subTopics']);
+        }
+      });
+
+      return subTopicsList;
+    } catch (error) {
+      console.error('Error fetching subTopics:', error);
+      return [];
+    }
   }
 }

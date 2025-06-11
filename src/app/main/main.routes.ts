@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { Sidebar } from './sidebar/sidebar';
 import { StudyPlanner } from './study-planner/study-planner';
 import { Techniques } from './techniques/techniques';
 import { Main } from './main';

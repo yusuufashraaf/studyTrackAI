@@ -1,7 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, input, OnInit } from '@angular/core';
 import { FirestoreService } from '../../firebase/firestore.service';
 import { CommonModule } from '@angular/common';
-
+import { Technique } from './technique.interface';
 @Component({
   selector: 'app-techniques',
   standalone: true,
@@ -11,17 +11,13 @@ import { CommonModule } from '@angular/common';
 })
 export class Techniques implements OnInit {
   private firestore = inject(FirestoreService);
-  techniques: {
-    topic: string;
-    questions: any[];
-    videoURL:string,
-    order: number;
-    expanded?: boolean;
-  }[] = [];
+  techniques: Technique[] = [];
+
+  message = input.required<string>();
 
   async ngOnInit() {
     this.techniques = await this.firestore.getTechniques();
-    // Initialize expanded flag to false for all topics    
+    // Initialize expanded flag to false for all topics
     this.techniques.forEach((t) => (t.expanded = false));
   }
 

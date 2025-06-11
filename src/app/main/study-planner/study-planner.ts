@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CalendarEvent } from 'angular-calendar';
 import {
   startOfMonth,
@@ -11,6 +11,8 @@ import {
 } from 'date-fns';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AuthServices } from '../../firebase/auth.services';
+import { FirestoreService } from '../../firebase/firestore.service';
 
 @Component({
   selector: 'app-study-planner',
@@ -21,6 +23,14 @@ import { FormsModule } from '@angular/forms';
 })
 export class StudyPlanner implements OnInit {
   viewDate: Date = new Date();
+
+  // Track which date's events details panel is open
+  openedDetailsDate: Date | null = null;
+
+  constructor(
+    private firestores: FirestoreService,
+    private fireAuth: AuthServices
+  ) {}
 
   readonly daysName: string[] = [
     'Sunday',
@@ -52,12 +62,26 @@ export class StudyPlanner implements OnInit {
 
   dayClicked(date: Date): void {
     if (this.viewDate.getTime() === date.getTime()) {
-      // You may toggle some UI state here if needed
+      // Optional: toggle details here if you want, or leave empty
       return;
     }
     this.viewDate = date;
   }
 
+  // Toggle the details panel for the clicked date
+  toggleDetails(date: Date, event: MouseEvent): void {
+    event.stopPropagation();
+    if (this.openedDetailsDate && isSameDay(this.openedDetailsDate, date)) {
+      this.openedDetailsDate = null;
+    } else {
+      this.openedDetailsDate = date;
+    }
+  }
+  // Close details if clicking outside calendar
+  @HostListener('document:click')
+  onDocumentClick() {
+    this.openedDetailsDate = null;
+  }
   getMonthDays(viewDate: Date): { date: Date; isOtherMonth: boolean }[] {
     const start = startOfWeek(startOfMonth(viewDate), { weekStartsOn: 0 });
     const end = endOfWeek(endOfMonth(viewDate), { weekStartsOn: 0 });
@@ -103,13 +127,13 @@ export class StudyPlanner implements OnInit {
   }
 
   generateEventsFromCoursePlan(
-    coursePlan: CoursePlan,
+    coursePlan: any,
     startDate: Date
   ): CalendarEvent[] {
     const events: CalendarEvent[] = [];
     let currentStart = new Date(startDate);
 
-    for (const subTopic of coursePlan.subTopics) {
+    for (const subTopic of coursePlan) {
       for (let i = 0; i < subTopic.duration; i++) {
         const day = addDays(currentStart, i);
         events.push({
@@ -123,22 +147,29 @@ export class StudyPlanner implements OnInit {
     return events;
   }
 
-  addCoursePlanToCalendar(coursePlan: CoursePlan): void {
+  addCoursePlanToCalendar(coursePlan: any): void {
     const startDate = new Date();
     this.events = this.generateEventsFromCoursePlan(coursePlan, startDate);
   }
 
-  ngOnInit(): void {
-    const coursePlan: CoursePlan = {
-      topic: 'front-end',
-      subTopics: [
-        { name: 'angular', duration: 7 },
-        { name: 'html', duration: 6 },
-      ],
-    };
-    this.events = this.generateEventsFromCoursePlan(
-      coursePlan,
-      new Date(2025, 5, 10)
-    );
+  hoverDate: Date | null = null;
+
+  async ngOnInit() {
+    try {
+      const user = this.fireAuth.getCurrentUser();
+      console.log(user!.uid);
+
+      if (!user) {
+        console.error('No user logged in');
+        return;
+      }
+
+      const subTopics = await this.firestores.getSubTopicsByUserId(user.uid);
+      console.log(subTopics);
+
+      this.addCoursePlanToCalendar(subTopics);
+    } catch (error) {
+      console.error('Error fetching subtopics:', error);
+    }
   }
 }
