@@ -73,15 +73,19 @@ export class GeminiService {
     });
 
     const jsonInstruction = `
-Respond ONLY with valid JSON in this format:
+Given a topic, return ONLY valid JSON in the following format:
+
 {
-  "topic": "front-end",
+  "topic": "<the topic you received>",
   "subTopics": [
-    { "name": "angular", "duration": 7 },
-    { "name": "html", "duration": 6 }
+    { "name": "<subtopic1>", "duration": <number> },
+    { "name": "<subtopic2>", "duration": <number> }
   ]
 }
-Do not include any explanations, markdown, or extra text.
+
+Do NOT include explanations, markdown, or extra text.
+Use your knowledge to break the topic into 3–5 useful subtopics with durations in days.
+Topic: "${prompt}"
 `;
 
     const fullPrompt = jsonInstruction + '\n' + prompt;
@@ -106,7 +110,6 @@ Do not include any explanations, markdown, or extra text.
     } catch (saveError) {
       console.error('Failed to save interaction to Firestore:', saveError);
     }
-
     return parsedResponse;
   }
 
