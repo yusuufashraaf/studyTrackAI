@@ -3,6 +3,7 @@ import {
   inject,
   Injector,
   runInInjectionContext,
+  OnDestroy,
 } from '@angular/core';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import {
@@ -12,17 +13,46 @@ import {
   collection,
   addDoc,
   serverTimestamp,
+  setDoc,
+  Timestamp,
 } from '@angular/fire/firestore';
 import { AuthServices } from '../../firebase/auth.services';
+import { Subscription } from 'rxjs';
+
+// Define the interface for user prompt activity
+interface UserPromptActivity {
+  promptsSentInWindow: number;
+  limitResetTimestamp: Timestamp;
+  lastUpdated?: Timestamp;
+}
 
 @Injectable({
   providedIn: 'root',
 })
-export class GeminiService {
+export class GeminiService implements OnDestroy {
   private generativeAI: GoogleGenerativeAI | null = null;
   private firestore: Firestore = inject(Firestore);
   private authService: AuthServices = inject(AuthServices);
   private injector = inject(Injector);
+  private currentUserId: string | null = null;
+  private authSubscription!: Subscription;
+  readonly DAILY_PROMPT_LIMIT = 2;
+
+  constructor() {
+    this.authService.getCurrentUserAsync().then((user: any) => {
+      if (user) {
+        this.currentUserId = user.uid;
+      } else {
+        this.currentUserId = null;
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
+  }
 
   // Fetch the API key from Firestore
   async getApiKey(): Promise<string> {
@@ -60,12 +90,91 @@ export class GeminiService {
     }
   }
 
+  // Check if the user has reached their daily prompt limit
+  async getPromptLimitStatus(): Promise<{
+    promptsLeft: number;
+    resetTime: Date | null;
+    limitReached: boolean;
+  }> {
+    return runInInjectionContext(this.injector, async () => {
+      if (!this.currentUserId) {
+        return { promptsLeft: 0, resetTime: null, limitReached: true };
+      }
+
+      const limitDocRef = doc(
+        this.firestore,
+        `user_prompt_activity/${this.currentUserId}`
+      );
+      const limitDocSnap = await getDoc(limitDocRef);
+      const nowJs = new Date();
+
+      if (limitDocSnap.exists()) {
+        const data = limitDocSnap.data() as UserPromptActivity;
+        const resetTime = data.limitResetTimestamp.toDate();
+
+        if (resetTime < nowJs) {
+          // Window has reset
+          return {
+            promptsLeft: this.DAILY_PROMPT_LIMIT,
+            resetTime: null,
+            limitReached: false,
+          };
+        } else {
+          // Still in the current window
+          const promptsSent = data.promptsSentInWindow || 0;
+          const promptsLeft = Math.max(
+            0,
+            this.DAILY_PROMPT_LIMIT - promptsSent
+          );
+          return { promptsLeft, resetTime, limitReached: promptsLeft === 0 };
+        }
+      } else {
+        // No record, user can send prompts
+        return {
+          promptsLeft: this.DAILY_PROMPT_LIMIT,
+          resetTime: null,
+          limitReached: false,
+        };
+      }
+    });
+  }
+
   // Generate a response using the Gemini model
   async generateResponse(prompt: string) {
+    if (!this.currentUserId) {
+      throw new Error('User authentication is required to use the AI chat.');
+    }
     await this.ensureAiInitialized();
 
     if (!this.generativeAI) {
       throw new Error('Generative AI service is not initialized');
+    }
+
+    // Check the user's prompt limit status
+    const limitDocRef = doc(
+      this.firestore,
+      `user_prompt_activity/${this.currentUserId}`
+    );
+    const limitDocSnap = await getDoc(limitDocRef);
+    const nowJs = new Date();
+    let promptsSentInCurrentWindow = 0;
+    let currentResetTimestamp: Timestamp | null = null;
+
+    if (limitDocSnap.exists()) {
+      const data = limitDocSnap.data() as UserPromptActivity;
+      currentResetTimestamp = data.limitResetTimestamp;
+      if (data.limitResetTimestamp.toDate() > nowJs) {
+        promptsSentInCurrentWindow = data.promptsSentInWindow || 0;
+      }
+    }
+
+    if (promptsSentInCurrentWindow >= this.DAILY_PROMPT_LIMIT) {
+      throw {
+        limitReached: true,
+        resetTime: currentResetTimestamp
+          ? currentResetTimestamp.toDate()
+          : new Date(nowJs.getTime() + 24 * 60 * 60 * 1000),
+      };
     }
 
     const model = await this.generativeAI.getGenerativeModel({
@@ -88,6 +197,7 @@ Use your knowledge to break the topic into 3–5 useful subtopics with durations
 Topic: "${prompt}"
 `;
 
+    // Actual prompt
     const fullPrompt = jsonInstruction + '\n' + prompt;
 
     const result = await model.generateContent(fullPrompt);
@@ -105,6 +215,32 @@ Topic: "${prompt}"
       parsedResponse = { error: 'Invalid JSON response', raw: text };
     }
 
+    // update prompt count in Firestore
+    const newPromptsSent = promptsSentInCurrentWindow + 1;
+    let newResetTimestamp: Timestamp;
+
+    if (
+      promptsSentInCurrentWindow === 0 ||
+      !currentResetTimestamp ||
+      currentResetTimestamp.toDate() < nowJs
+    ) {
+      newResetTimestamp = Timestamp.fromDate(
+        new Date(nowJs.getTime() + 24 * 60 * 60 * 1000)
+      );
+    } else {
+      newResetTimestamp = currentResetTimestamp;
+    }
+
+    await setDoc(
+      limitDocRef,
+      {
+        promptsSentInWindow: newPromptsSent,
+        limitResetTimestamp: newResetTimestamp,
+        lastUpdated: serverTimestamp(),
+      },
+      { merge: true }
+    );
+
     try {
       await this.saveToFirestore(prompt, parsedResponse);
     } catch (saveError) {
@@ -116,13 +252,9 @@ Topic: "${prompt}"
   // save the response to Firestore
   async saveToFirestore(userPrompt: string, aiResponse: any): Promise<void> {
     return runInInjectionContext(this.injector, async () => {
-      const currentUser = this.authService.getCurrentUser();
-      let userId = null;
-      if (currentUser) {
-        userId = currentUser.uid;
-      } else {
-        console.warn('No authenticated user found, saving without user ID');
-        userId = null;
+      if (!this.currentUserId) {
+        console.warn('Attempting to save interaction without user ID');
+        throw new Error('User ID is required to save interaction');
       }
 
       try {
@@ -133,7 +265,7 @@ Topic: "${prompt}"
         await addDoc(responsesCollection, {
           prompt: userPrompt,
           response: aiResponse,
-          userId: userId,
+          userId: this.currentUserId,
           timestamp: serverTimestamp(),
         });
         console.log('Interaction saved to Firestore');
