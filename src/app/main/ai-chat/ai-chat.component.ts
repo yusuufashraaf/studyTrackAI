@@ -13,22 +13,51 @@ import { GeminiService } from './gemini-service';
 export class AiChatComponent {
   userInput: string = '';
   response: any;
+  isLimitReached: boolean = false;
+  resetTime: Date | null = null;
 
   geminiService: GeminiService = inject(GeminiService);
 
-  sendMessage() {
-    if (this.userInput.trim()) {
-      this.geminiService
-        .generateResponse(this.userInput)
-        .then((res) => {
-          this.response = res;
-          console.log('Response from Gemini:', this.response);
-        })
-        .catch((error) => {
-          console.error('Error generating response:', error);
-          this.response = 'An error occurred while generating the response.';
-        });
-      this.userInput = '';
+  async sendMessage() {
+    if (!this.userInput.trim()) return;
+
+    // If already limited, just show the reset time
+    if (this.isLimitReached) {
+      if (this.resetTime) {
+        this.response = `You can try again at ${this.resetTime.toLocaleString()}.`;
+      } else {
+        this.response =
+          'You have reached your daily limit. Please try again later.';
+      }
+      return;
     }
+
+    // Check limit before sending
+    const promptStatus = await this.geminiService.getPromptLimitStatus();
+    if (promptStatus.limitReached) {
+      this.isLimitReached = true;
+      this.resetTime = promptStatus.resetTime;
+      this.response = `You can try again at ${this.resetTime?.toLocaleString()}.`;
+      return;
+    }
+
+    this.response = '';
+    this.geminiService
+      .generateResponse(this.userInput)
+      .then(() => {
+        this.response = 'roadmap is added to your calendar 🚀';
+        this.isLimitReached = false;
+        this.resetTime = null;
+      })
+      .catch((error) => {
+        if (error && error.limitReached) {
+          this.isLimitReached = true;
+          this.resetTime = error.resetTime;
+          this.response = `You can try again at ${this.resetTime?.toLocaleString()}.`;
+        } else {
+          this.response = 'An error occurred while generating the response.';
+        }
+      });
+    this.userInput = '';
   }
 }

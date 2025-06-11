@@ -4,12 +4,19 @@
       [(ngModel)]="userInput"
       placeholder="Type your message here..."
       class="ai-chat-input"
+      [class.limit-reached-input]="isLimitReached"
       type="text"
+      [disabled]="isLimitReached"
     />
-    <button class="ai-chat-send-btn" (click)="sendMessage()">Send</button>
+    <button
+      class="ai-chat-send-btn"
+      (click)="sendMessage()"
+      [class.limit-reached-btn]="isLimitReached"
+      [disabled]="isLimitReached"
+    >Send</button>
   </div>
   <div *ngIf="response">
     <h3>Response:</h3>
-    <pre>{{ response | json }}</pre>
+    <pre>{{ response }}</pre>
   </div>
 </div>
