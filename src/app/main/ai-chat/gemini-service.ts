@@ -177,7 +177,7 @@ export class GeminiService implements OnDestroy {
       };
     }
 
-    const model = await this.generativeAI.getGenerativeModel({
+    const model = this.generativeAI.getGenerativeModel({
       model: 'gemini-1.5-flash',
     });
 
@@ -193,7 +193,7 @@ Given a topic, return ONLY valid JSON in the following format:
 }
 
 Do NOT include explanations, markdown, or extra text.
-Use your knowledge to break the topic into 3–5 useful subtopics with durations in days.
+Use your knowledge to break the topic into 3–8 useful subtopics with durations in days.
 Topic: "${prompt}"
 `;
 
@@ -201,8 +201,8 @@ Topic: "${prompt}"
     const fullPrompt = jsonInstruction + '\n' + prompt;
 
     const result = await model.generateContent(fullPrompt);
-    const response = await result.response;
-    const text = await response.text();
+    const response =  result.response;
+    const text =  response.text();
     // console.log(text);
 
     // parse the response as JSON

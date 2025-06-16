@@ -42,7 +42,6 @@ export class AuthServices {
       uid: userCredential.user.uid,
       fullName,
       email,
-      password,
       createdAt: new Date(),
     });
 
